@@ -59,7 +59,19 @@ type GetAddressResult = Omit<Address, "createdAt" | "updatedAt" | "enrollmentId"
 
 async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
   const enrollment = exclude(params, "address");
-  const address = getAddressForUpsert(params.address);
+  const address: CreateAddressParams = getAddressForUpsert(params.address);
+
+  /* const result = await request.get(`https://viacep.com.br/ws/${address.cep}/json/`);
+
+  if (result.status === 400 || result.data.error) {
+    throw requestError(400, `This CEP is not valid`);
+  } */
+
+  const erro: boolean = (await request.get(`https://viacep.com.br/ws/${address.cep}/json/`)).data.erro;
+
+  if (erro) {
+    throw requestError(400, "Invalid CEP");
+  }
 
   //TODO - Verificar se o CEP é válido
 
@@ -67,10 +79,11 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
   if (result.error) {
     throw notFoundError();
   }
-
+  
   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, "userId"));
 
   await addressRepository.upsert(newEnrollment.id, address, address);
+  return;
 }
 
 function getAddressForUpsert(address: CreateAddressParams) {
