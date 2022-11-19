@@ -20,3 +20,17 @@ export async function GetTickets(req: AuthenticatedRequest, res: Response) {
     return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
+
+export async function PostTickets(req: AuthenticatedRequest, res: Response) {
+  try {
+    const ticket = await ticketsService.PostTickets(req.userId, req.body.ticketTypeId);
+    return res.status(httpStatus.CREATED).send(ticket);
+  } catch (error) {
+    if(error.name === "RequestError") {
+      return res.sendStatus(httpStatus.BAD_REQUEST);
+    } else if (error.name === "NotFoundError") {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+    return res.sendStatus(httpStatus.NOT_FOUND);
+  }
+}
