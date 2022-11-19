@@ -1,5 +1,6 @@
 import ticketsRepositories from "@/repositories/tickets-repository";
 import enrollmentRepository from "@/repositories/enrollment-repository/index";
+import { notFoundError } from "@/errors";
 
 async function GetTicketsTypeService() {
   const result = await ticketsRepositories.findManyTicketsTypes();
@@ -11,6 +12,10 @@ async function GetTicketsTypeService() {
 async function GetTickets(userId: number) {
   const enrollmentId: number = (await enrollmentRepository.findWithAddressByUserId(userId)).id;
   const result = await ticketsRepositories.findUniqueTickets(enrollmentId);
+
+  if(!result) {
+    throw notFoundError();
+  }
 
   return result;
 }
