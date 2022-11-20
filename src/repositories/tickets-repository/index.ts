@@ -29,14 +29,25 @@ async function findFirstTicketsById(ticketId: number) {
   return prisma.ticket.findFirst({
     where: {
       id: ticketId
+    },
+    include: {
+      TicketType: true
     }
   });
+}
+
+async function updateStatus(id: number) {   
+  return prisma.ticket.update({     
+    where: { id },     
+    data: { status: "PAID" },   
+  }); 
 }
 
 const ticketsRepositories = {
   findManyTicketsTypes,
   findUniqueTickets,
   findFirstTicketsById,
+  updateStatus,
   createTicket
 };
 

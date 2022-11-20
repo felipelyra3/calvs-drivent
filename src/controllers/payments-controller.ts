@@ -22,7 +22,8 @@ export async function GetPayments(req: AuthenticatedRequest, res: Response) {
 
 export async function PostPaymentProcess(req: AuthenticatedRequest, res: Response) {
   try {
-    return res.status(httpStatus.OK).send("PostPaymentProcess");
+    const payment = await paymentService.PostPaymentProcess(req.body, req.userId);
+    return res.status(httpStatus.OK).send(payment);
   } catch (error) {
     if(error.name === "NotFoundError") {
       return res.sendStatus(httpStatus.NOT_FOUND);
