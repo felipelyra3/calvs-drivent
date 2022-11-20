@@ -1,8 +1,8 @@
-import express from "express";
+import { Router } from "express";
 import { authenticateToken, validateBody } from "@/middlewares";
 import { GetTicketsTypes, GetTickets, PostTickets } from "@/controllers/tickets-controller";
 
-const ticketRouter = express();
+const ticketRouter = Router();
 
 ticketRouter
   .all("/*", authenticateToken)
